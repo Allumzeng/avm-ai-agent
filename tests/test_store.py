@@ -13,7 +13,7 @@ def test_create_vector_store_connects_to_index():
 def test_upsert_chunks_calls_index_upsert(sample_chunks):
     mock_index = MagicMock()
     mock_embedder = MagicMock()
-    mock_embedder.get_text_embedding.return_value = [0.1] * 1024
+    mock_embedder.get_text_embedding_batch.return_value = [[0.1] * 1024, [0.2] * 1024]
     upsert_chunks(mock_index, mock_embedder, sample_chunks)
     assert mock_index.upsert.called
 

@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 """Run full Google Drive -> Pinecone ingestion."""
+import sys
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 from src.config import (
     PINECONE_API_KEY, PINECONE_INDEX_NAME,
     GOOGLE_DRIVE_FOLDER_ID, GOOGLE_SERVICE_ACCOUNT_JSON,
