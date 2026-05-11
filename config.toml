@@ -1,0 +1,14 @@
+[project]
+enable_telemetry = false
+
+[UI]
+name = "AVM AI Agent"
+logo = "public/dpd_logo.png"
+favicon = "public/dpd_logo.png"
+default_collapse_content = true
+
+[meta]
+generated_by = "1.3.0"
+
+[auth]
+require_login = true
