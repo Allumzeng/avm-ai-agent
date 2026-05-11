@@ -1,0 +1,12 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
+PINECONE_API_KEY = os.environ["PINECONE_API_KEY"]
+PINECONE_INDEX_NAME = os.environ.get("PINECONE_INDEX_NAME", "avm-knowledge-base")
+GOOGLE_DRIVE_FOLDER_ID = os.environ["GOOGLE_DRIVE_FOLDER_ID"]
+GOOGLE_SERVICE_ACCOUNT_JSON = os.environ["GOOGLE_SERVICE_ACCOUNT_JSON"]
+VOYAGE_API_KEY = os.environ["VOYAGE_API_KEY"]
+WEBHOOK_VERIFICATION_TOKEN = os.environ.get("WEBHOOK_VERIFICATION_TOKEN", "")
