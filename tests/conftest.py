@@ -1,4 +1,16 @@
+import os
 import pytest
+
+# Set dummy env vars before any test module imports src.config (which reads them at module level).
+# Uses setdefault so real values in the environment are not overridden.
+for _key, _val in {
+    "ANTHROPIC_API_KEY": "test-anthropic-key",
+    "PINECONE_API_KEY": "test-pinecone-key",
+    "GOOGLE_DRIVE_FOLDER_ID": "test-folder-id",
+    "GOOGLE_SERVICE_ACCOUNT_JSON": "{}",
+    "VOYAGE_API_KEY": "test-voyage-key",
+}.items():
+    os.environ.setdefault(_key, _val)
 
 @pytest.fixture
 def sample_chunks():
