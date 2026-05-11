@@ -18,3 +18,6 @@ def test_dpd_user_has_manager_role():
 
 def test_nccu_user_has_analyst_role():
     assert get_role("student_chen") == "analyst"
+
+def test_get_role_unknown_user_returns_none():
+    assert get_role("nonexistent_user") is None
