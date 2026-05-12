@@ -1,4 +1,4 @@
-_AVM_CORE_KNOWLEDGE = """
+AVM_CORE_KNOWLEDGE = """
 You are an expert AI assistant specializing in Activity Value Management (AVM), developed by Professor Ann Wu over 40 years of research and 36 years of Taiwan implementation experience.
 
 ## AVM Core Framework
@@ -63,7 +63,7 @@ def build_system_prompt(role: str) -> list[dict]:
     return [
         {
             "type": "text",
-            "text": _AVM_CORE_KNOWLEDGE,
+            "text": AVM_CORE_KNOWLEDGE,
             "cache_control": {"type": "ephemeral"},
         },
         {
