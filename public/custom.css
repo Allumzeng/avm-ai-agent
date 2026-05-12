@@ -1,0 +1,52 @@
+/* Lively in-place pulse: rotate + scale + opacity. Applied only to the SVG so
+   the surrounding text never shifts. transform-origin: center keeps the SVG
+   spinning around its own center, never pushing its neighbors. */
+@keyframes avm-pulse {
+  0%   { transform: scale(1) rotate(0deg);    opacity: 1; }
+  50%  { transform: scale(1.18) rotate(180deg); opacity: 0.55; }
+  100% { transform: scale(1) rotate(360deg);  opacity: 1; }
+}
+
+/* Animated ellipsis after the "Thinking..." text */
+@keyframes avm-dots {
+  0%, 20%  { content: ""; }
+  40%      { content: "."; }
+  60%      { content: ".."; }
+  80%, 100%{ content: "..."; }
+}
+
+/* Loader pulse — added at runtime by custom.js when "Thinking..." appears. */
+svg.avm-pulse-loader {
+  animation: avm-pulse 1.6s ease-in-out infinite;
+  transform-origin: center center;
+  transform-box: fill-box;
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+/* Optional: subtle fade-in on assistant messages so each chunk feels alive */
+.message-content,
+[class*="message-content"] {
+  animation: avm-fadein 220ms ease-out both;
+}
+@keyframes avm-fadein {
+  from { opacity: 0; transform: translateY(2px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* === Dark mode: logo presentation === */
+/* Remove any white card/background behind the logo and brighten the logo so it pops on dark bg */
+html.dark img[src*="dpd_logo"],
+[data-theme="dark"] img[src*="dpd_logo"],
+.dark img[src*="dpd_logo"] {
+  background: transparent !important;
+  filter: brightness(1.15) contrast(1.05) drop-shadow(0 0 14px rgba(255, 255, 255, 0.18));
+}
+
+/* If a wrapper container has a white background in dark mode, strip it */
+html.dark :is(div, section, header):has(> img[src*="dpd_logo"]),
+[data-theme="dark"] :is(div, section, header):has(> img[src*="dpd_logo"]),
+.dark :is(div, section, header):has(> img[src*="dpd_logo"]) {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}

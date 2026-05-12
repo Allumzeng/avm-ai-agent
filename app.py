@@ -11,6 +11,7 @@ from src.config import (
     VOYAGE_API_KEY,
 )
 from src.auth.users import authenticate
+from src.auth.oauth import resolve_oauth_user
 from src.rag.embedder import create_embedder
 from src.rag.store import create_vector_store
 from src.agent.client import AVMAgentClient
@@ -88,6 +89,23 @@ def auth_callback(username: str, password: str) -> Optional[cl.User]:
             metadata={"role": user["role"], "group": user["group"]},
         )
     return None
+
+
+@cl.oauth_callback
+def oauth_callback(
+    provider_id: str,
+    token: str,
+    raw_user_data: dict,
+    default_user: cl.User,
+) -> Optional[cl.User]:
+    email = raw_user_data.get("email", "")
+    rule = resolve_oauth_user(email)
+    if not rule:
+        return None
+    return cl.User(
+        identifier=email,
+        metadata={"role": rule["role"], "group": rule["group"], "provider": provider_id},
+    )
 
 
 @cl.on_chat_start
