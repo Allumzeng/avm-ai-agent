@@ -110,22 +110,58 @@ async def on_message(message: cl.Message):
     source_data: Optional[dict] = cl.user_session.get("source_data")
     report_state: Optional[ReportState] = cl.user_session.get("report_state")
 
+    response_text = ""
+
     # Handle file upload: parse and store, reset any previous report
     file_uploaded_this_turn = False
     for element in message.elements:
         if hasattr(element, "path") and element.path and hasattr(element, "name"):
             with open(element.path, "rb") as f:
                 file_bytes = f.read()
-            source_data = parse_uploaded_file(file_bytes, element.name)
-            cl.user_session.set("source_data", source_data)
-            cl.user_session.set("report_state", None)
-            report_state = None
-            file_uploaded_this_turn = True
+            try:
+                source_data = parse_uploaded_file(file_bytes, element.name)
+                cl.user_session.set("source_data", source_data)
+                cl.user_session.set("report_state", None)
+                report_state = None
+                file_uploaded_this_turn = True
+            except ValueError as e:
+                response_msg = cl.Message(content=f"⚠️ Could not read file: {e}")
+                await response_msg.send()
+                return
+
+    # Guard: empty file (no parseable data rows)
+    if file_uploaded_this_turn and not source_data["sheets"]:
+        response_msg = cl.Message(
+            content=(
+                f"⚠️ **{source_data['file_name']}** was uploaded but contained no data rows. "
+                "Please check the file and try again."
+            )
+        )
+        await response_msg.send()
+        return
 
     history.append({"role": "user", "content": message.content})
 
     response_msg = cl.Message(content="Thinking...")
     await response_msg.send()
+
+    # If file was uploaded while mid-wizard, show upload prompt instead of routing to wizard
+    if file_uploaded_this_turn and wizard_state and not wizard_state.is_complete:
+        response_text = (
+            f"File **{source_data['file_name']}** uploaded successfully "
+            f"({sum(len(rows) for rows in source_data['sheets'].values())} data rows across "
+            f"{len(source_data['sheets'])} sheet(s)).\n\n"
+            "Which report would you like?\n"
+            "- **Profitability report** — revenue, cost, net margin by customer/product\n"
+            "- **Capacity analysis** — idle capacity and over-utilization by activity center\n"
+            "- **Activity attribute dashboard** — value-added vs. non-value-added breakdown\n"
+            "- **Value object report** — long-term vs. short-term value by customer/product"
+        )
+        history.append({"role": "assistant", "content": response_text})
+        cl.user_session.set("history", history)
+        response_msg.content = response_text
+        await response_msg.update()
+        return
 
     route, payload = route_message(message.content, wizard_state, source_data, report_state)
 
@@ -156,18 +192,21 @@ async def on_message(message: cl.Message):
         response_text = anomaly_block + new_report.report_text
 
     elif route == "report_drilldown":
-        drill_history = list(history)
-        drill_history.insert(
-            -1,
-            {
-                "role": "assistant",
-                "content": (
-                    f"[Previously generated report for reference:]\n\n"
-                    f"{report_state.report_text}"
-                ),
-            },
-        )
-        response_text = agent.get_response(history=drill_history, role=role)
+        if report_state.report_text:
+            drill_history = list(history)
+            drill_history.insert(
+                -1,
+                {
+                    "role": "assistant",
+                    "content": (
+                        f"[Previously generated report for reference:]\n\n"
+                        f"{report_state.report_text}"
+                    ),
+                },
+            )
+            response_text = agent.get_response(history=drill_history, role=role)
+        else:
+            response_text = agent.get_response(history=history, role=role)
 
     else:
         response_text = agent.get_response(history=history, role=role)
