@@ -8,6 +8,8 @@ _SETUP_PATTERNS = [
     r"implement.*avm",
     r"avm.*implement",
     r"avm.*setup",
+    r"setup.*avm",
+    r"set up.*avm",
     r"開始.*設置",
     r"設置.*精靈",
     r"avm.*精靈",
