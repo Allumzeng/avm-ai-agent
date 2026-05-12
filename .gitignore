@@ -1,6 +1,7 @@
 .env
 secrets/
 .worktrees/
+users.json
 *.pyc
 __pycache__/
 .pytest_cache/

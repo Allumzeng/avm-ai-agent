@@ -1,0 +1,5 @@
+{
+  "_note": "Copy this file to users.json (gitignored). Manage users with: python manage_users.py",
+  "_roles": "executive | manager | analyst",
+  "_groups": "dpd_taiwan | nccu_students"
+}
