@@ -115,3 +115,17 @@ def test_step_complete_wizard_marks_done():
         )
 
     assert new_state.is_complete is True
+
+
+def test_step_raises_on_unexpected_stop_reason():
+    import pytest
+    engine = _make_engine()
+    state = WizardState(wizard_type="setup")
+
+    mock_response = MagicMock()
+    mock_response.stop_reason = "max_tokens"
+    mock_response.content = []
+
+    with patch.object(engine.client.messages, "create", return_value=mock_response):
+        with pytest.raises(RuntimeError, match="max_tokens"):
+            engine.step(state, [{"role": "user", "content": "hi"}], "analyst")

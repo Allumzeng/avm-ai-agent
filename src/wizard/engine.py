@@ -97,6 +97,11 @@ class WizardEngine:
                 messages.append({"role": "assistant", "content": response.content})
                 messages.append({"role": "user", "content": tool_results})
 
+            else:
+                raise RuntimeError(
+                    f"Unexpected stop_reason from Claude API: {response.stop_reason!r}"
+                )
+
     def _retriever(self, query: str, module_filter=None) -> list[str]:
         return retrieve_chunks(
             self.pinecone_index,
