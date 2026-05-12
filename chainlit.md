@@ -1,8 +1,8 @@
 # 歡迎使用 AVM AI Agent / Welcome to AVM AI Agent
 
-本 Agent 由 DPD Taiwan 與國立政治大學合作開發，基於吳安妮教授的作業價值管理 (AVM) 理論。
+本Agent由DPD Taiwan數位中心Strategic PM - Allum Zeng獨立開發，基於吳安妮教授的作業價值管理 (AVM) 理論。使用權限僅限於DPD Taiwan內部和與DPD Taiwan合作之政大同學使用。
 
-This agent is developed in collaboration between DPD Taiwan and NCCU, based on Professor Ann Wu's Activity Value Management (AVM) framework.
+This agent is solely developed by Strategic Program Manager - Allum at Digital Transformation Center at DPD Taiwan, based on Professor Ann Wu's Activity Value Management (AVM) framework. Access is limited to DPD Taiwan employees and National Chengchi University students collaborating with DPD Taiwan.
 
 ## 您可以問我 / You can ask me about:
 - AVM 四大模組的概念與計算方式
