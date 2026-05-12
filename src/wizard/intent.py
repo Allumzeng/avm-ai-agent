@@ -14,14 +14,13 @@ _SETUP_PATTERNS = [
 ]
 
 _DIAGNOSIS_PATTERNS = [
-    r"diagnos",
     r"losing money",
     r"lose money",
     r"margin.*shrink",
     r"shrink.*margin",
     r"capacity.*wast",
     r"wast.*capacity",
-    r"esg.*report",
+    r"need.*esg",
     r"start.*diagnosis",
     r"diagnosis.*wizard",
     r"虧損",

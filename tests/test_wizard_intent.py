@@ -41,3 +41,9 @@ def test_returns_none_for_chinese_qa():
 
 def test_returns_none_for_empty():
     assert detect_wizard_intent("") is None
+
+def test_esg_question_does_not_trigger_wizard():
+    assert detect_wizard_intent("What is ESG reporting in AVM?") is None
+
+def test_diagnosis_noun_does_not_trigger_wizard():
+    assert detect_wizard_intent("What does AVM diagnosis mean?") is None
