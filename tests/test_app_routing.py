@@ -40,3 +40,12 @@ def test_completed_wizard_can_start_new_wizard():
     route, payload = route_message("start diagnosis wizard", state)
     assert route == "wizard_start"
     assert payload == "diagnosis"
+
+
+def test_active_wizard_takes_priority_over_intent():
+    # Even if the message matches a wizard-start intent pattern,
+    # an active (incomplete) wizard should still route to wizard_continue.
+    state = WizardState(wizard_type="setup", current_step=2)
+    route, payload = route_message("I want to start the AVM setup wizard", state)
+    assert route == "wizard_continue"
+    assert payload is state

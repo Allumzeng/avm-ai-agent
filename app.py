@@ -1,7 +1,7 @@
 import sys
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-from typing import Optional
+from typing import Literal, Optional, Union
 import chainlit as cl
 
 from src.config import (
@@ -46,7 +46,7 @@ def _get_singletons():
 def route_message(
     message_text: str,
     wizard_state: Optional[WizardState],
-) -> tuple[str, object]:
+) -> tuple[Literal["wizard_continue", "wizard_start", "qa"], Union[WizardState, str, None]]:
     if wizard_state and not wizard_state.is_complete:
         return "wizard_continue", wizard_state
     intent = detect_wizard_intent(message_text)
