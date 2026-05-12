@@ -1,5 +1,6 @@
 .env
 secrets/
+.worktrees/
 *.pyc
 __pycache__/
 .pytest_cache/
