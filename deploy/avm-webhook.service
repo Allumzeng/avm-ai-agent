@@ -1,0 +1,15 @@
+[Unit]
+Description=AVM Webhook Server (FastAPI)
+After=network.target
+
+[Service]
+Type=simple
+User=avm
+WorkingDirectory=/opt/avm-agent
+EnvironmentFile=/opt/avm-agent/.env
+ExecStart=/opt/avm-agent/venv/bin/uvicorn webhook_server:app --host 127.0.0.1 --port 8001
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

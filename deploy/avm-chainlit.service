@@ -1,0 +1,15 @@
+[Unit]
+Description=AVM AI Agent (Chainlit)
+After=network.target
+
+[Service]
+Type=simple
+User=avm
+WorkingDirectory=/opt/avm-agent
+EnvironmentFile=/opt/avm-agent/.env
+ExecStart=/opt/avm-agent/venv/bin/chainlit run app.py --host 127.0.0.1 --port 8000 --headless
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
