@@ -14,10 +14,16 @@ def parse_uploaded_file(file_bytes: bytes, file_name: str) -> dict:
                 "<sheet_name>": [{"<col>": <value>, ...}, ...]
             }
         }
+
+    Raises:
+        ValueError: if the file extension is not supported (.csv, .xlsx, .xlsm, .xltx).
     """
-    if file_name.lower().endswith(".csv"):
+    ext = file_name.lower().rsplit(".", 1)[-1] if "." in file_name else ""
+    if ext == "csv":
         return _parse_csv(file_bytes, file_name)
-    return _parse_excel(file_bytes, file_name)
+    if ext in ("xlsx", "xlsm", "xltx"):
+        return _parse_excel(file_bytes, file_name)
+    raise ValueError(f"Unsupported file type '.{ext}'. Supported: .csv, .xlsx, .xlsm, .xltx")
 
 
 def _parse_excel(file_bytes: bytes, file_name: str) -> dict:
@@ -29,10 +35,20 @@ def _parse_excel(file_bytes: bytes, file_name: str) -> dict:
         headers: list[str] | None = None
         for i, row in enumerate(ws.iter_rows(values_only=True)):
             if i == 0:
-                headers = [
+                # Build headers, de-duplicating duplicates with a numeric suffix
+                raw_headers = [
                     str(c) if c is not None else f"col_{j}"
                     for j, c in enumerate(row)
                 ]
+                seen: dict[str, int] = {}
+                headers = []
+                for h in raw_headers:
+                    if h in seen:
+                        seen[h] += 1
+                        headers.append(f"{h}_{seen[h]}")
+                    else:
+                        seen[h] = 0
+                        headers.append(h)
             else:
                 if any(c is not None for c in row) and headers:
                     rows.append(dict(zip(headers, row)))
@@ -44,5 +60,5 @@ def _parse_excel(file_bytes: bytes, file_name: str) -> dict:
 def _parse_csv(file_bytes: bytes, file_name: str) -> dict:
     text = file_bytes.decode("utf-8-sig", errors="replace")
     reader = csv.DictReader(io.StringIO(text))
-    rows = [dict(row) for row in reader]
+    rows = [dict(r) for r in reader if any(v.strip() for v in r.values())]
     return {"file_name": file_name, "sheets": {"Sheet1": rows}}

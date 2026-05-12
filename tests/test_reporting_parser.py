@@ -1,5 +1,6 @@
 import io
 import csv
+import pytest
 import openpyxl
 from src.reporting.parser import parse_uploaded_file
 
@@ -68,3 +69,24 @@ def test_parse_excel_multiple_sheets():
     result = parse_uploaded_file(_make_excel_bytes(data), "avm.xlsx")
     assert "Module2" in result["sheets"]
     assert "Module3" in result["sheets"]
+
+
+def test_parse_unsupported_extension_raises():
+    with pytest.raises(ValueError, match="Unsupported"):
+        parse_uploaded_file(b"junk", "report.pdf")
+
+
+def test_parse_excel_deduplicates_duplicate_headers():
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Data"
+    ws.append(["amount", "amount", "name"])  # duplicate "amount"
+    ws.append([100, 200, "Alpha"])
+    buf = io.BytesIO()
+    wb.save(buf)
+    result = parse_uploaded_file(buf.getvalue(), "dup.xlsx")
+    row = result["sheets"]["Data"][0]
+    assert "amount" in row
+    assert "amount_1" in row
+    assert row["amount"] == 100
+    assert row["amount_1"] == 200
