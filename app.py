@@ -91,21 +91,23 @@ def auth_callback(username: str, password: str) -> Optional[cl.User]:
     return None
 
 
-@cl.oauth_callback
-def oauth_callback(
-    provider_id: str,
-    token: str,
-    raw_user_data: dict,
-    default_user: cl.User,
-) -> Optional[cl.User]:
-    email = raw_user_data.get("email", "")
-    rule = resolve_oauth_user(email)
-    if not rule:
-        return None
-    return cl.User(
-        identifier=email,
-        metadata={"role": rule["role"], "group": rule["group"], "provider": provider_id},
-    )
+import os as _os
+if _os.environ.get("OAUTH_GOOGLE_CLIENT_ID") and _os.environ.get("OAUTH_GOOGLE_CLIENT_SECRET"):
+    @cl.oauth_callback
+    def oauth_callback(
+        provider_id: str,
+        token: str,
+        raw_user_data: dict,
+        default_user: cl.User,
+    ) -> Optional[cl.User]:
+        email = raw_user_data.get("email", "")
+        rule = resolve_oauth_user(email)
+        if not rule:
+            return None
+        return cl.User(
+            identifier=email,
+            metadata={"role": rule["role"], "group": rule["group"], "provider": provider_id},
+        )
 
 
 @cl.on_chat_start

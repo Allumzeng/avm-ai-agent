@@ -16,13 +16,14 @@ def chunk_documents(documents: list[Document]) -> list[dict]:
     nodes = _SPLITTER.get_nodes_from_documents(documents)
     chunks = []
     for node in nodes:
-        source_file = node.metadata.get("file_id", "unknown")
         text = node.get_content()
         chunks.append({
             "id": str(uuid.uuid4()),
             "text": text,
             "metadata": {
-                "source_file": source_file,
+                "source_file": node.metadata.get("file_id", "unknown"),
+                "file_name": node.metadata.get("file_name", "unknown"),
+                "folder_path": node.metadata.get("folder_path", ""),
                 "language": _detect_language(text),
                 "doc_type": node.metadata.get("mime_type", "unknown"),
                 "module": node.metadata.get("avm_module", 0),
